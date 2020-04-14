@@ -3,13 +3,19 @@ from .locators import ProductPageLocators
 
 
 class ProductPage(BasePage):
-    def add_product_to_basket(self):
+    def should_be_product_page(self):
         self.should_be_product_page_url()
+
+    def add_product_to_basket(self):
         self.should_be_add_to_basket_button()
         self.add_to_basket()
+
+    def check_success_message(self):
         self.should_be_success_message()
         self.should_be_title_in_success_msg()
         self.should_be_correct_title()
+
+    def check_basket_info_message(self):
         self.should_be_basket_info_msg()
         self.should_be_total_cost_in_basket_info_msg()
         self.should_be_correct_price()
@@ -22,14 +28,21 @@ class ProductPage(BasePage):
         assert self.is_element_present(*ProductPageLocators.ADD_TO_BASKET_BTN), (
                 'There is no "Add to basket" button on the page')
 
+    def should_not_be_success_message(self):
+        assert self.is_not_element_present(*ProductPageLocators.SUCCESS_MSG), (
+                'Success message is presented, but should not be')
+
     def add_to_basket(self):
         add_to_basket_btn = self.browser.find_element(*ProductPageLocators.ADD_TO_BASKET_BTN)
         add_to_basket_btn.click()
-        self.solve_quiz_and_get_code()
 
     def should_be_success_message(self):
         assert self.is_element_present(*ProductPageLocators.SUCCESS_MSG), (
                 'There is no success message after add product to basket')
+
+    def should_be_disappeared_success_message(self):
+        assert self.is_disappeared(*ProductPageLocators.SUCCESS_MSG), (
+                'Success message is presented, but should be disappeared')
 
     def should_be_title_in_success_msg(self):
         assert self.is_element_present(*ProductPageLocators.TITLE_IN_MSG), (
