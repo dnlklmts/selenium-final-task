@@ -15,7 +15,7 @@ class ProductPage(BasePage):
         self.should_be_correct_price()
 
     def should_be_product_page_url(self):
-        assert '?promo=newYear' in self.browser.current_url, (
+        assert 'catalogue' in self.browser.current_url, (
                 'This is not product page')
 
     def should_be_add_to_basket_button(self):
