@@ -63,6 +63,7 @@ class ProductPage(BasePage):
         assert self.is_element_present(*ProductPageLocators.TOTAL_COST), (
                 'There is no total cost in basket info message')
 
+    # checks if total cost of one product is the same as original price of added item (in £)
     def should_be_correct_price(self):
         total_cost = self.browser.find_element(*ProductPageLocators.TOTAL_COST).text[1:]
         correct_price = self.browser.find_element(*ProductPageLocators.PRODUCT_PRICE).text[1:]
