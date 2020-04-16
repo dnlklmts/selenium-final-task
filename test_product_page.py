@@ -1,12 +1,41 @@
 import pytest
+import time
 from .pages.product_page import ProductPage
 from .pages.login_page import LoginPage
 from .pages.basket_page import BasketPage
 
 
+class TestUserAddToBasketFromProductPage():
+    @pytest.fixture(scope='function', autouse=True)
+    def setup(self, browser):
+        self.login_link = 'http://selenium1py.pythonanywhere.com/accounts/login/'
+        self.email = str(time.time()) + '@fakemail.org'
+        self.password = '123QWEqwe!'
+        self.login_page = LoginPage(browser, self.login_link)
+        self.login_page.open()
+        self.login_page.should_be_login_page()
+        self.login_page.register_new_user(self.email, self.password)
+
+    def test_user_cant_see_success_message(self, browser):
+        link = 'http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/'
+        page = ProductPage(browser, link)
+        page.open()
+        page.should_be_product_page()
+        page.should_not_be_success_message()
+
+    def test_user_can_add_product_to_basket(self, browser):
+        link = 'http://selenium1py.pythonanywhere.com/catalogue/the-shellcoders-handbook_209/'
+        page = ProductPage(browser, link)
+        page.open()
+        page.should_be_product_page()
+        page.add_product_to_basket()
+        page.check_success_message()
+        page.check_basket_info_message()
+
+
 @pytest.mark.parametrize('link', [
-    "http://selenium1py.pythonanywhere.com/en-gb/catalogue/the-shellcoders-handbook_209/?promo=newYear",
-    "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=newYear2019",
+    # "http://selenium1py.pythonanywhere.com/en-gb/catalogue/the-shellcoders-handbook_209/?promo=newYear",
+    # "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=newYear2019",
     "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer0",
     "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer1",
     "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer2",
@@ -53,3 +82,31 @@ def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
     basket_page.should_not_be_items_in_basket()
     basket_page.should_be_empty_basket_message()
     basket_page.should_be_correct_empty_basket_message()
+
+
+@pytest.mark.xfail(reason='Success message is presented, but should not be')
+def test_guest_cant_see_success_message_after_adding_product_to_basket(browser):
+    link = 'http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/'
+    page = ProductPage(browser, link)
+    page.open()
+    page.should_be_product_page()
+    page.add_product_to_basket()
+    page.should_not_be_success_message()
+
+
+def test_guest_cant_see_success_message(browser):
+    link = 'http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/'
+    page = ProductPage(browser, link)
+    page.open()
+    page.should_be_product_page()
+    page.should_not_be_success_message()
+
+
+@pytest.mark.xfail(reason='Success message is presented, but should be disappeared')
+def test_message_disappeared_after_adding_product_to_basket(browser):
+    link = 'http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/'
+    page = ProductPage(browser, link)
+    page.open()
+    page.should_be_product_page()
+    page.add_product_to_basket()
+    page.should_be_disappeared_success_message()
